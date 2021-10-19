@@ -32,7 +32,7 @@ SetupGui() {
 
         if (WARNING_SHOWN == false) {
             WARNING_SHOWN := true
-            MsgBox, "Overlay will open once D2R has been launched."
+            MsgBox, Overlay will open once D2R has been launched.
         }
     }
 }
@@ -56,7 +56,10 @@ UpdateGuiState() {
 }
 
 ; Gets the position of the D2 window and returns the relative 
-; position for the gui 
+; position for the gui.
+; @param {number} GuiHeight         Defines the GUI height to calculate the offset.
+; @param {number} GuiPadding        Defines the padding of the GUI.
+; @returns {x: number, y: number}   Coordiantes where the GUI will be placed 
 GetPositionForGui(GuiHeight, GuiPadding) {
     WinGetPos, D2X, D2Y, D2W, D2H, ahk_exe D2R.exe
 
