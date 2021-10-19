@@ -69,7 +69,7 @@ SetupHotkeys() {
     global KEY_THAT_CASTS_SPELLS
     global HOTKEYS
 
-    Hotkey, IfWinActive, ahk_exe Discord.exe ; Makes all following hotkeys context-sensitive
+    Hotkey, IfWinActive, ahk_exe D2R.exe ; Makes all following hotkeys context-sensitive
     Hotkey, ~F10, SwitchCasterButton
     Hotkey, ~F11, ExitApp
 
@@ -80,4 +80,4 @@ SetupHotkeys() {
 }
 
 ; Including a reload hotkey for easier development
-#Include, lib\gui.ahk
+#Include, lib\dev.ahk
