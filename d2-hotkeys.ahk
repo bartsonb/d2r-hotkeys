@@ -1,13 +1,20 @@
 #NoEnv
 #Warn 
 
+#Include, lib\gui.ahk
+
+; Setup for tray icon
+TrayIcon = %A_ScriptDir%\assets\D2Hotkeys.ico
+IfExist, %TrayIcon%
+Menu, Tray, Icon, %TrayIcon%
+
 /*
 ; TODO setup reading of ini
 ; Read ini file
 IniRead, IniConfiguration, %A_ScriptDir%\config.ini, Configuration
 IniRead, IniHotkeys, %A_ScriptDir%\config.ini, Hotkeys
 
-IniConfigurationSplitted := StrSplit(IniConfiguration,"`n","`r")
+IniConfigurationSplitted := StrSplit(IniConfiguration,"`n","`r")◘
 for k, v in IniConfigurationSplitted {
     line := StrSplit(v, "=")
     for k, v in line {
@@ -17,63 +24,60 @@ for k, v in IniConfigurationSplitted {
 }
 */
 
+HOTKEYS := ["q", "w", "e", "r", "t"]
 IS_PRODUCTION := true
 SHOW_GUI := true
-BUTTON_THAT_CASTS_SKILL := "RButton"
-
-#Include, lib\gui.ahk
+KEY_THAT_CASTS_SPELLS := "RButton"
 
 ; Setup the GUI
-SetupGui()
-
-; Setup for tray icon
-TrayIcon = %A_ScriptDir%\assets\D2Hotkeys.ico
-IfExist, %TrayIcon%
-Menu, Tray, Icon, %TrayIcon%
-
-; Gets the position of the D2 window and returns the relative 
-; position for the gui 
-GetPositionForGui(GuiHeight, GuiPadding) {
-    WinGetPos, D2X, D2Y, D2W, D2H, ahk_exe D2R.exe
-
-    X := D2X + GuiPadding
-    Y := D2Y + (D2H - (GuiHeight + GuiPadding))
-
-    Return Object("X", X, "Y", Y)
-    ; return {"x": X, "y": Y}
+if (SHOW_GUI) {
+    SetupGui()
 }
+
+; Setup all hotkeys
+SetupHotkeys()
 
 ; Switches the Button that is used to cast spells and also 
 ; updates the GUI Text
 SwitchCasterButton() {
-    global BUTTON_THAT_CASTS_SKILL
+    global KEY_THAT_CASTS_SPELLS
     global GUI_TEXT_ELEMENT
+    global SHOW_GUI
 
-    BUTTON_THAT_CASTS_SKILL := (BUTTON_THAT_CASTS_SKILL == "RButton")
+    KEY_THAT_CASTS_SPELLS := (KEY_THAT_CASTS_SPELLS == "RButton")
         ? "LButton"
         : "RButton"
 
-    GuiControl, Text, %GUI_TEXT_ELEMENT%, % "  D2 Hotkeys: On. Skill Button: [" . BUTTON_THAT_CASTS_SKILL . "]  " 
+    if (SHOW_GUI) {
+        GuiControl, Text, %GUI_TEXT_ELEMENT%, % "  D2 Hotkeys: On. Skill Button: [" . KEY_THAT_CASTS_SPELLS . "]  " 
+    }
 }
 
-; Checks if MS Code is open with script name in title, 
-; and reloads the script on save - for easier development
-; TODO use A_ScriptName
-#IfWinActive, ahk_exe Code.exe
-    ~^s::
-        Reload
-    Return
+SendKey() {
+    global KEY_THAT_CASTS_SPELLS
+
+    Send, % "+{" . KEY_THAT_CASTS_SPELLS . "}" ; "+" equals the shift key
+}
+
+ExitApp() {
+    ExitApp
+}
 
 ; TODO get hotkeys from the config file
-; Setup keybinds for D2 skills
-; "+" equals the shift key
-#IfWinActive, ahk_exe D2R.exe
-    ~q::Send, % "+{" . BUTTON_THAT_CASTS_SKILL . "}"
-    ~w::Send, % "+{" . BUTTON_THAT_CASTS_SKILL . "}"
-    ~e::Send, % "+{" . BUTTON_THAT_CASTS_SKILL . "}"
-    ~r::Send, % "+{" . BUTTON_THAT_CASTS_SKILL . "}"
-    ~t::Send, % "+{" . BUTTON_THAT_CASTS_SKILL . "}"
- 
-    ~F10::SwitchCasterButton()
-    ~F11::ExitApp
-    Return
+; Create all hotkeys in a loop
+SetupHotkeys() {
+    global KEY_THAT_CASTS_SPELLS
+    global HOTKEYS
+
+    Hotkey, IfWinActive, ahk_exe Discord.exe ; Makes all following hotkeys context-sensitive
+    Hotkey, ~F10, SwitchCasterButton
+    Hotkey, ~F11, ExitApp
+
+    Loop, % HOTKEYS.Length() {
+        CurrentHotkey := Hotkeys[A_Index]
+        Hotkey, ~%CurrentHotkey%, SendKey
+    }
+}
+
+; Including a reload hotkey for easier development
+#Include, lib\gui.ahk
