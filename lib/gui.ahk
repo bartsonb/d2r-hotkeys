@@ -1,6 +1,6 @@
 GUI_HEIGHT := 20
 GUI_PADDING := 15
-WARNING_SHOWN := false
+WarningShown := false
 
 ; Setting timer for updating the HotkeyDisplay whenever the 
 ; state of the D2 Window changes
@@ -10,10 +10,7 @@ Settimer, UpdateGuiState, 1000
 ; Also warns the user when D2R has not been launched and waits for D2R
 ; to be opened. 
 SetupGui() {
-    global WARNING_SHOWN
-    global KEY_THAT_CASTS_SPELLS
-    global GUI_HEIGHT
-    global GUI_PADDING
+    global
 
     if WinExist("ahk_exe D2R.exe") {
         SetTimer, SetupGui, Off
@@ -25,13 +22,13 @@ SetupGui() {
         Gui, HotkeyDisplay:Margin, 0, 0
         Gui, HotkeyDisplay:Font, cWhite s8 ; c = color, s = size
         Gui, HotkeyDisplay:Color, 111111
-        Gui, HotkeyDisplay:Add, Text, x0 y0 h%GUI_HEIGHT% HwndGUI_TEXT_ELEMENT 0x200, % "  D2 Hotkeys: On, Skill Button: [" . KEY_THAT_CASTS_SPELLS . "]  "
+        Gui, HotkeyDisplay:Add, Text, x0 y0 h%GUI_HEIGHT% HwndGUI_TEXT_ELEMENT 0x200, % "  D2 Hotkeys: On, Skill Button: [" . Config["MAIN"]["CASTER_KEY"] . "]  "
         Gui, HotkeyDisplay:Show, % "x" . GuiPosition["X"] . "y" . GuiPosition["Y"] . "NoActivate"
     } else {
         SetTimer, SetupGui, 3000
 
-        if (WARNING_SHOWN == false) {
-            WARNING_SHOWN := true
+        if (WarningShown == false) {
+            WarningShown := true
             MsgBox, Overlay will open once D2R has been launched.
         }
     }
@@ -40,10 +37,8 @@ SetupGui() {
 ; Updates position and show/hide state of the gui depending on 
 ; the active state of the D2 Window
 UpdateGuiState() {
+    global
     DetectHiddenWindows, on
-
-    global GUI_HEIGHT
-    global GUI_PADDING
 
     if WinActive("ahk_exe D2R.exe") {
         Gui, HotkeyDisplay:Show, NoActivate
