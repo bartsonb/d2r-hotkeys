@@ -22,7 +22,8 @@ SetupGui() {
         Gui, HotkeyDisplay:Margin, 0, 0
         Gui, HotkeyDisplay:Font, cWhite s8 ; c = color, s = size
         Gui, HotkeyDisplay:Color, 111111
-        Gui, HotkeyDisplay:Add, Text, x0 y0 h%GUI_HEIGHT% HwndGUI_TEXT_ELEMENT 0x200, % "  D2 Hotkeys: On, Skill Button: [" . Config["MAIN"]["CASTER_KEY"] . "]  "
+        Gui, HotkeyDisplay:Add, Picture, x0 y0 w%GUI_HEIGHT% h%GUI_HEIGHT% , % A_ScriptDir . "\assets\D2Hotkeys.ico"
+        Gui, HotkeyDisplay:Add, Text, x25 y0 h%GUI_HEIGHT% HwndGUI_TEXT_ELEMENT 0x200, % "  D2 Hotkeys: On, Skill Button: [" . Config["MAIN"]["CASTER_KEY"] . "]  "
         Gui, HotkeyDisplay:Show, % "x" . GuiPosition["X"] . "y" . GuiPosition["Y"] . "NoActivate"
     } else {
         SetTimer, SetupGui, 3000
